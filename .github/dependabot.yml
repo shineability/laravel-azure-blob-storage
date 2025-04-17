@@ -1,0 +1,28 @@
+version: 2
+updates:
+  - package-ecosystem: "composer"
+    directory: "/"                  
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    assignees:
+      - shineability
+    labels:
+      - "dependencies"
+      - "composer"
+  - package-ecosystem: "github-actions"
+    directory: "/"                  
+    schedule:
+      interval: "daily"               
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    assignees:
+      - shineability
+    labels:
+      - "dependencies"
+      - "github-actions"
