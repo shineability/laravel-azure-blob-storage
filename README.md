@@ -34,6 +34,8 @@ Configure the disk in `config/filesystems.php`:
     'connection' => [
         'account_name' => env('AZURE_BLOB_STORAGE_ACCOUNT_NAME'),
         'account_key' => env('AZURE_BLOB_STORAGE_ACCOUNT_KEY'),
+        'default_endpoints_protocol' => 'http',
+        'blob_endpoint' => 'http://127.0.0.1:10000/devstoreaccount1'
         ...
     ],
 ],
@@ -107,6 +109,21 @@ To configure a disk, assign the name of the connection to the `connection` key i
 ```
 
 If you don't specify a `connection` key in the driver config, the `default` connection will be used.
+
+### Temporary Upload URLs
+
+The driver supports generating temporary upload URLs for a given blob. This is useful when you want to allow users to upload files directly to Azure Blob Storage without exposing your storage account credentials.
+
+```php
+use Illuminate\Support\Facades\Storage;
+
+['url' => $url, 'headers' => $headers] = Storage::temporaryUploadUrl(
+    'logo.png', now()->addMinutes(5)
+);
+```
+
+For more information on how to upload blobs using temporary URLs, check the 
+[**Azure Storage docs**](https://learn.microsoft.com/en-us/rest/api/storageservices/put-blob).
 
 ### Using the `AzureBlobStorage` facade
 
