@@ -122,7 +122,7 @@ use Illuminate\Support\Facades\Storage;
 );
 ```
 
-For more information on how to upload blobs using temporary URLs, check the 
+For more information on how to upload blobs using temporary URLs, check the
 [**Azure Storage docs**](https://learn.microsoft.com/en-us/rest/api/storageservices/put-blob).
 
 ### Using the `AzureBlobStorage` facade
@@ -167,7 +167,7 @@ is to call the `container()` method directly on the facade:
 $filesystem = AzureBlobStorage::container('images');
 ```
 
-The facade is bound to the `Connector` class, which is used to create a container filesystems factory for a given connection.
+The facade is bound to the `Connector` class, which is used to create a container filesystem factory for a given connection.
 
 ## Testing
 
@@ -202,6 +202,10 @@ Available `matrix` options are available in the [workflow file](.github/workflow
 ## Changelog
 
 Please read the [**CHANGELOG**](CHANGELOG.md) for more information on what has changed recently.
+
+## Alternatives
+
+- [azure-oss/azure-storage-php-adapter-laravel](https://github.com/Azure-OSS/azure-storage-php-adapter-laravel)
 
 ## License
 
