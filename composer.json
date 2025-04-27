@@ -1,6 +1,7 @@
 {
     "name": "shineability/laravel-azure-blob-storage",
     "description": "Azure Blob Storage filesystem driver for Laravel",
+    "keywords": ["azure", "blob", "storage", "filesystem", "laravel", "php"],
     "type": "library",
     "license": "MIT",
     "authors": [
