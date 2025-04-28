@@ -15,7 +15,8 @@
         "webmozart/assert": "^1.11",
         "illuminate/filesystem": "^11|^12",
         "illuminate/support": "^11|^12",
-        "azure-oss/storage-blob-flysystem": "^1.2"
+        "azure-oss/storage-blob-flysystem": "^1.2",
+        "azure-oss/storage": "dev-main as 1.x-dev"
     },
     "require-dev": {
         "graham-campbell/testbench": "^6.0",
@@ -37,7 +38,8 @@
     },
     "scripts": {
         "lint": "vendor/bin/pint -v",
-        "test:unit": "vendor/bin/testbench package:test",
+        "test:unit": "vendor/bin/testbench package:test --testsuite Unit",
+        "test:integration": "vendor/bin/testbench package:test --testsuite Integration",
         "test:types": "vendor/bin/phpstan analyze --memory-limit=-1",
         "test:lint": "vendor/bin/pint --test -v",
         "test": [

@@ -3,7 +3,7 @@ name: Coding standards
 on: [ push, pull_request ]
 
 jobs:
-  pint:
+  coding-standards:
     name: Pint
 
     runs-on: ubuntu-latest
