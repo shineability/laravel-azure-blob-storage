@@ -41,7 +41,7 @@ class Connector
 
     private function createConnection(array $config): Connection
     {
-        return Connection::create($this->convertSnakeCaseKeysToPascalCase($config));
+        return Connection::fromArray($this->convertSnakeCaseKeysToPascalCase($config));
     }
 
     private function convertSnakeCaseKeysToPascalCase(array $config): array

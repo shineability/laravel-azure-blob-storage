@@ -13,7 +13,6 @@ class AzureBlobStorageServiceProvider extends ServiceProvider
     public function boot(Connector $manager): void
     {
         Storage::extend('azure_blob_storage', function (Application $app, array $config) use ($manager) {
-
             return $manager
                 ->connect($config['connection'] ?? null)
                 ->container($config['container'], $config['prefix'] ?? '', $config);

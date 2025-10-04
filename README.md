@@ -188,16 +188,16 @@ composer test
 You can run the Github workflows locally with [act](https://github.com/nektos/act). To run the tests locally, run:
 
 ```
-act -j phpunit -P ubuntu-latest=shivammathur/node:latest
+act -j unit-tests -P ubuntu-latest=shivammathur/node:latest
 ```
 
 To run tests for a specific PHP and Laravel version, run:
 
 ```
-act -j phpunit --matrix php:8.3 --matrix laravel:"11.*" -P ubuntu-latest=shivammathur/node:latest
+act -j unit-tests --matrix php:8.3 --matrix laravel:"11.*" -P ubuntu-latest=shivammathur/node:latest
 ```
 
-Available `matrix` options are available in the [workflow file](.github/workflows/tests.yml).
+Available `matrix` options are available in the [workflow file](.github/workflows/unit-tests.yml).
 
 ## Changelog
 

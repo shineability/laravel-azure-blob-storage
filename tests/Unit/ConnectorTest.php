@@ -2,11 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Shineability\LaravelAzureBlobStorage\Tests;
+namespace Shineability\LaravelAzureBlobStorage\Tests\Unit;
 
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\Test;
+use Shineability\LaravelAzureBlobStorage\Tests\TestCase;
 
 class ConnectorTest extends TestCase
 {
@@ -56,24 +58,28 @@ class ConnectorTest extends TestCase
         ]);
     }
 
-    public function test_it_can_not_be_created_from_driver_config_with_non_existing_connection()
+    #[Test]
+    public function it_can_not_be_created_from_driver_config_with_non_existing_connection()
     {
         $this->expectException(InvalidArgumentException::class);
 
         Storage::disk('disk_with_invalid_connection_config_string');
     }
 
-    public function test_it_can_be_created_from_driver_config_with_fallback_to_default_connection()
+    #[Test]
+    public function it_can_be_created_from_driver_config_with_fallback_to_default_connection()
     {
         $this->assertInstanceOf(FilesystemAdapter::class, Storage::disk('disk_with_fallback_to_default_connection'));
     }
 
-    public function test_it_can_be_created_from_driver_config_with_connection_string()
+    #[Test]
+    public function it_can_be_created_from_driver_config_with_connection_string()
     {
         $this->assertInstanceOf(FilesystemAdapter::class, Storage::disk('disk_with_connection_config_string'));
     }
 
-    public function test_it_can_be_created_from_driver_config_with_connection_array()
+    #[Test]
+    public function it_can_be_created_from_driver_config_with_connection_array()
     {
         $this->assertInstanceOf(FilesystemAdapter::class, Storage::disk('disk_with_connection_config_array'));
     }

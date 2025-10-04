@@ -9,6 +9,8 @@ use Webmozart\Assert\Assert;
 
 final class Connection implements Stringable
 {
+    public const DEVELOPMENT_STORAGE = 'UseDevelopmentStorage=true';
+
     private const VALID_KEYS = [
         'AccountName',
         'AccountKey',
@@ -30,10 +32,24 @@ final class Connection implements Stringable
         $this->values = $values;
     }
 
-    public static function create(array $values): self
+    public static function fromString(string $connection): self
     {
+        $values = collect(explode(';', $connection))
+            ->mapWithKeys(fn ($pair) => explode('=', $pair, 2))
+            ->toArray();
+
         return new self($values);
     }
+
+    public static function fromArray(array $connection): self
+    {
+        return new self($connection);
+    }
+
+    // public static function useDevelopmentStorage(): self
+    // {
+    //     return
+    // }
 
     private function defaults(): array
     {
@@ -47,7 +63,8 @@ final class Connection implements Stringable
     {
         return collect($this->defaults())
             ->merge($this->values)
-            ->map(fn ($value, $key) => "{$key}={$value}")->implode(';');
+            ->map(fn ($value, $key) => "{$key}={$value}")
+            ->implode(';');
     }
 
     public function __toString(): string
