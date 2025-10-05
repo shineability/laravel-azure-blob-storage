@@ -1,0 +1,23 @@
+grumphp:
+  extensions:
+    - YieldStudio\GrumPHPLaravelPint\ExtensionLoader
+  tasks:
+    phplint: ~
+    composer: ~
+    laravel_pint:
+      auto_fix: 'pre_commit'
+      auto_stage: 'pre_commit'
+    phpunit:
+      config_file: phpunit.xml.dist
+      always_execute: true
+    phpstan:
+      configuration: phpstan.neon.dist
+      memory_limit: '-1'
+      triggered_by: [ 'php' ]
+    git_blacklist:
+      keywords:
+        - '\bdie\('
+        - '\bdd\('
+        - '\bdump\('
+      triggered_by: [ 'php' ]
+      regexp_type: P
