@@ -172,9 +172,9 @@ The facade is bound to the `Connector` class, which is used to create a containe
 ## Testing
 
 ```bash
-composer test:lint
-composer test:types
 composer test:unit
+composer test:types
+composer lint
 ```
 
 Run **linting**, **static analysis** and **unit tests** in one go.

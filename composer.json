@@ -23,7 +23,10 @@
         "larastan/larastan": "^3.2",
         "orchestra/testbench": "^9.0|^10.0",
         "phpstan/phpstan-deprecation-rules": "^2.0",
-        "phpstan/phpstan-strict-rules": "^2.0"
+        "phpstan/phpstan-strict-rules": "^2.0",
+        "phpro/grumphp": "^2.15",
+        "php-parallel-lint/php-parallel-lint": "^1.4",
+        "yieldstudio/grumphp-laravel-pint": "^1.0"
     },
     "autoload": {
         "psr-4": {
@@ -36,14 +39,19 @@
         }
     },
     "scripts": {
-        "lint": "vendor/bin/pint -v",
+        "lint:fix": "vendor/bin/pint -v",
+        "lint": "vendor/bin/pint --test -v",
         "test:unit": "vendor/bin/testbench package:test",
         "test:types": "vendor/bin/phpstan analyze --memory-limit=-1",
-        "test:lint": "vendor/bin/pint --test -v",
         "test": [
-            "@test:lint",
+            "@test:unit",
             "@test:types",
-            "@test:unit"
+            "@lint"
         ]
+    },
+    "config": {
+        "allow-plugins": {
+            "phpro/grumphp": true
+        }
     }
 }
