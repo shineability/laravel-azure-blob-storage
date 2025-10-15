@@ -66,6 +66,6 @@ class StorageDriverTest extends TestCase
             $temporaryUpload['url']
         );
 
-        $this->assertArraySubset(['x-ms-blob-type' => 'BlockBlob'], $temporaryUpload['headers']);
+        $this->assertEquals('BlockBlob', $temporaryUpload['headers']['x-ms-blob-type']);
     }
 }
