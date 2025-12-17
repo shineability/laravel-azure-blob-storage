@@ -12,7 +12,7 @@
     ],
     "require": {
         "php": "^8.2",
-        "webmozart/assert": "^1.11",
+        "webmozart/assert": "^1.11 || ^2.0",
         "illuminate/filesystem": "^11|^12",
         "illuminate/support": "^11|^12",
         "azure-oss/storage-blob-flysystem": "^1.2"
