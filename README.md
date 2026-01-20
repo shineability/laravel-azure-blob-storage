@@ -173,16 +173,16 @@ composer test
 Run the GitHub workflows locally with [act](https://github.com/nektos/act):
 
 ```bash
-act -j phpunit -P ubuntu-latest=shivammathur/node:latest
+act -j unit-tests -P ubuntu-latest=shivammathur/node:latest
 ```
 
 Run tests for a specific PHP and Laravel version:
 
 ```bash
-act -j phpunit --matrix php:8.3 --matrix laravel:"11.*" -P ubuntu-latest=shivammathur/node:latest
+act -j unit-tests --matrix php:8.3 --matrix laravel:"11.*" -P ubuntu-latest=shivammathur/node:latest
 ```
 
-Available matrix options are in the [workflow file](.github/workflows/tests.yml).
+Available matrix options are in the [workflow file](.github/workflows/unit-tests.yml).
 
 ## Changelog
 
