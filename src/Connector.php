@@ -8,7 +8,7 @@ use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 
-class Connector
+final readonly class Connector
 {
     /**
      * @param  array<string, string|array<string, string>>  $connections

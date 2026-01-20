@@ -7,7 +7,7 @@ namespace Shineability\LaravelAzureBlobStorage;
 use InvalidArgumentException;
 use Webmozart\Assert\Assert;
 
-final class Connection
+final readonly class Connection
 {
     private const VALID_KEYS = [
         'AccountName',

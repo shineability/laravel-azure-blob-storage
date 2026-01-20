@@ -6,7 +6,7 @@ namespace Shineability\LaravelAzureBlobStorage;
 
 use Illuminate\Filesystem\FilesystemAdapter;
 
-final class ContainerFilesystemFactory
+final readonly class ContainerFilesystemFactory
 {
     private Connection $connection;
 
