@@ -20,14 +20,14 @@ class ConnectionTest extends TestCase
             'EndpointSuffix' => 'core.linux.net',
         ]);
 
-        $this->assertInstanceOf(Connection::class, $connection);
+        self::assertInstanceOf(Connection::class, $connection);
 
         $connectionString = $connection->toString();
 
-        $this->assertStringContainsString('DefaultEndpointsProtocol=https', $connectionString);
-        $this->assertStringContainsString('AccountName=account_name', $connectionString);
-        $this->assertStringContainsString("AccountKey={$accountKey}", $connectionString);
-        $this->assertStringContainsString('EndpointSuffix=core.linux.net', $connectionString);
+        self::assertStringContainsString('DefaultEndpointsProtocol=https', $connectionString);
+        self::assertStringContainsString('AccountName=account_name', $connectionString);
+        self::assertStringContainsString("AccountKey={$accountKey}", $connectionString);
+        self::assertStringContainsString('EndpointSuffix=core.linux.net', $connectionString);
     }
 
     #[Test]
@@ -39,16 +39,16 @@ class ConnectionTest extends TestCase
             'EndpointSuffix' => 'core.windows.net',
         ]);
 
-        $this->assertInstanceOf(Connection::class, $connection);
+        self::assertInstanceOf(Connection::class, $connection);
 
         $connectionString = $connection->toString();
 
-        $this->assertStringContainsString('AccountName=account_name', $connectionString);
-        $this->assertStringContainsString('SharedAccessSignature=sv=2023-01-03&ss=b&srt=sco&sp=r&se=2025-01-01', $connectionString);
+        self::assertStringContainsString('AccountName=account_name', $connectionString);
+        self::assertStringContainsString('SharedAccessSignature=sv=2023-01-03&ss=b&srt=sco&sp=r&se=2025-01-01', $connectionString);
     }
 
     #[Test]
-    public function it_requires_valid_keys()
+    public function it_requires_valid_keys(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
@@ -61,7 +61,7 @@ class ConnectionTest extends TestCase
     }
 
     #[Test]
-    public function it_requires_an_account_name()
+    public function it_requires_an_account_name(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
@@ -72,7 +72,7 @@ class ConnectionTest extends TestCase
     }
 
     #[Test]
-    public function it_requires_either_account_key_or_sas_token()
+    public function it_requires_either_account_key_or_sas_token(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Connection must include either "AccountKey" or "SharedAccessSignature".');

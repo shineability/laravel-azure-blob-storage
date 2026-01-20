@@ -20,7 +20,7 @@ class FacadeTest extends TestCase
     {
         parent::getEnvironmentSetUp($app);
 
-        $app['config']->set('filesystems.azure_blob_storage.connections', [
+        config()->set('filesystems.azure_blob_storage.connections', [
             'default' => [
                 'account_name' => 'default_account_name',
                 'account_key' => base64_encode('default_account_key'),
@@ -33,16 +33,16 @@ class FacadeTest extends TestCase
     }
 
     #[Test]
-    public function it_can_create_a_container_filesystem_for_the_default_connection_using_a_shortcut()
+    public function it_can_create_a_container_filesystem_for_the_default_connection_using_a_shortcut(): void
     {
-        $this->assertInstanceOf(FilesystemContract::class, AzureBlobStorage::container('container'));
+        self::assertInstanceOf(FilesystemContract::class, AzureBlobStorage::container('container'));
     }
 
     #[Test]
-    public function it_can_connect_to_a_file_storage()
+    public function it_can_connect_to_a_file_storage(): void
     {
-        $this->assertInstanceOf(ContainerFilesystemFactory::class, AzureBlobStorage::connect());
-        $this->assertInstanceOf(ContainerFilesystemFactory::class, AzureBlobStorage::connect('custom'));
+        self::assertInstanceOf(ContainerFilesystemFactory::class, AzureBlobStorage::connect());
+        self::assertInstanceOf(ContainerFilesystemFactory::class, AzureBlobStorage::connect('custom'));
     }
 
     protected static function getFacadeAccessor(): string

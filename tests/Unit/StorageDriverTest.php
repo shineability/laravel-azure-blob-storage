@@ -14,7 +14,7 @@ class StorageDriverTest extends TestCase
     {
         parent::getEnvironmentSetUp($app);
 
-        $app['config']->set('filesystems.disks.azure_blob_storage_disk', [
+        config()->set('filesystems.disks.azure_blob_storage_disk', [
             'driver' => 'azure_blob_storage',
             'container' => 'container',
             'prefix' => 'prefix',
@@ -26,51 +26,51 @@ class StorageDriverTest extends TestCase
     }
 
     #[Test]
-    public function it_can_generate_a_public_url()
+    public function it_can_generate_a_public_url(): void
     {
         $publicUrl = 'https://account_name.blob.core.windows.net/container/prefix/foobar.txt';
 
-        $this->assertEquals($publicUrl, Storage::disk('azure_blob_storage_disk')->url('foobar.txt'));
+        self::assertSame($publicUrl, Storage::disk('azure_blob_storage_disk')->url('foobar.txt'));
     }
 
     #[Test]
-    public function it_can_generate_a_temporary_url()
+    public function it_can_generate_a_temporary_url(): void
     {
         $expirationDate = now()->addHour();
 
         $temporaryUrl = Storage::disk('azure_blob_storage_disk')->temporaryUrl('foobar.txt', $expirationDate);
 
-        $this->assertStringContainsString('https://account_name.blob.core.windows.net/container/prefix/foobar.txt', $temporaryUrl);
+        self::assertStringContainsString('https://account_name.blob.core.windows.net/container/prefix/foobar.txt', $temporaryUrl);
 
-        $this->assertMatchesRegularExpression('/sig=(.*)/', $temporaryUrl);
-        $this->assertMatchesRegularExpression('/sp=r/', $temporaryUrl);
+        self::assertMatchesRegularExpression('/sig=(.*)/', $temporaryUrl);
+        self::assertMatchesRegularExpression('/sp=r/', $temporaryUrl);
 
-        $this->assertMatchesRegularExpression(
+        self::assertMatchesRegularExpression(
             sprintf('/se=%sT%sZ/', $expirationDate->format('Y-m-d'), $expirationDate->format('H:i:s')),
             $temporaryUrl
         );
     }
 
     #[Test]
-    public function it_can_generate_a_temporary_upload_url()
+    public function it_can_generate_a_temporary_upload_url(): void
     {
         $expirationDate = now()->addHour();
 
         $temporaryUpload = Storage::disk('azure_blob_storage_disk')->temporaryUploadUrl('foobar.txt', $expirationDate);
 
-        $this->assertArrayHasKey('url', $temporaryUpload);
-        $this->assertArrayHasKey('headers', $temporaryUpload);
+        self::assertArrayHasKey('url', $temporaryUpload);
+        self::assertArrayHasKey('headers', $temporaryUpload);
 
-        $this->assertStringContainsString('https://account_name.blob.core.windows.net/container/prefix/foobar.txt', $temporaryUpload['url']);
+        self::assertStringContainsString('https://account_name.blob.core.windows.net/container/prefix/foobar.txt', $temporaryUpload['url']);
 
-        $this->assertMatchesRegularExpression('/sig=(.*)/', $temporaryUpload['url']);
-        $this->assertMatchesRegularExpression('/sp=w/', $temporaryUpload['url']);
+        self::assertMatchesRegularExpression('/sig=(.*)/', $temporaryUpload['url']);
+        self::assertMatchesRegularExpression('/sp=w/', $temporaryUpload['url']);
 
-        $this->assertMatchesRegularExpression(
+        self::assertMatchesRegularExpression(
             sprintf('/se=%sT%sZ/', $expirationDate->format('Y-m-d'), $expirationDate->format('H:i:s')),
             $temporaryUpload['url']
         );
 
-        $this->assertArraySubset(['x-ms-blob-type' => 'BlockBlob'], $temporaryUpload['headers']);
+        self::assertArraySubset(['x-ms-blob-type' => 'BlockBlob'], $temporaryUpload['headers']);
     }
 }

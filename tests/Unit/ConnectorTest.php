@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Storage;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\Test;
 use Shineability\LaravelAzureBlobStorage\Connector;
-use Shineability\LaravelAzureBlobStorage\ContainerFilesystemFactory;
 use Shineability\LaravelAzureBlobStorage\Tests\TestCase;
 
 class ConnectorTest extends TestCase
@@ -18,7 +17,7 @@ class ConnectorTest extends TestCase
     {
         parent::getEnvironmentSetUp($app);
 
-        $app['config']->set('filesystems.azure_blob_storage.connections', [
+        config()->set('filesystems.azure_blob_storage.connections', [
             'default' => [
                 'account_name' => 'default_account',
                 'account_key' => base64_encode('default_key'),
@@ -30,7 +29,7 @@ class ConnectorTest extends TestCase
             'connection_string' => 'AccountName=connection_string_account;AccountKey=' . base64_encode('connection_string_key'),
         ]);
 
-        $app['config']->set('filesystems.disks.disk_with_connection_config_array', [
+        config()->set('filesystems.disks.disk_with_connection_config_array', [
             'driver' => 'azure_blob_storage',
             'container' => 'container',
             'prefix' => 'prefix',
@@ -40,34 +39,34 @@ class ConnectorTest extends TestCase
             ],
         ]);
 
-        $app['config']->set('filesystems.disks.disk_with_connection_string', [
+        config()->set('filesystems.disks.disk_with_connection_string', [
             'driver' => 'azure_blob_storage',
             'container' => 'container',
             'prefix' => 'prefix',
             'connection' => 'AccountName=account_name;AccountKey=' . base64_encode('account_key'),
         ]);
 
-        $app['config']->set('filesystems.disks.disk_without_connection', [
+        config()->set('filesystems.disks.disk_without_connection', [
             'driver' => 'azure_blob_storage',
             'container' => 'container',
             'prefix' => 'prefix',
         ]);
 
-        $app['config']->set('filesystems.disks.disk_with_named_connection', [
+        config()->set('filesystems.disks.disk_with_named_connection', [
             'driver' => 'azure_blob_storage',
             'container' => 'container',
             'prefix' => 'prefix',
             'connection' => 'other',
         ]);
 
-        $app['config']->set('filesystems.disks.disk_with_invalid_connection', [
+        config()->set('filesystems.disks.disk_with_invalid_connection', [
             'driver' => 'azure_blob_storage',
             'container' => 'container',
             'prefix' => 'prefix',
             'connection' => 'invalid_string_not_a_connection',
         ]);
 
-        $app['config']->set('filesystems.disks.disk_with_named_connection_string', [
+        config()->set('filesystems.disks.disk_with_named_connection_string', [
             'driver' => 'azure_blob_storage',
             'container' => 'container',
             'prefix' => 'prefix',
@@ -76,19 +75,19 @@ class ConnectorTest extends TestCase
     }
 
     #[Test]
-    public function it_uses_default_connection_when_connection_is_null()
+    public function it_uses_default_connection_when_connection_is_null(): void
     {
-        $this->assertInstanceOf(FilesystemAdapter::class, Storage::disk('disk_without_connection'));
+        self::assertInstanceOf(FilesystemAdapter::class, Storage::disk('disk_without_connection'));
     }
 
     #[Test]
-    public function it_can_use_named_connection()
+    public function it_can_use_named_connection(): void
     {
-        $this->assertInstanceOf(FilesystemAdapter::class, Storage::disk('disk_with_named_connection'));
+        self::assertInstanceOf(FilesystemAdapter::class, Storage::disk('disk_with_named_connection'));
     }
 
     #[Test]
-    public function it_throws_when_named_connection_not_configured()
+    public function it_throws_when_named_connection_not_configured(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Azure Blob Storage connection [invalid_string_not_a_connection] is not configured.');
@@ -97,42 +96,70 @@ class ConnectorTest extends TestCase
     }
 
     #[Test]
-    public function it_can_be_created_from_driver_config_with_connection_string()
+    public function it_can_be_created_from_driver_config_with_connection_string(): void
     {
-        $this->assertInstanceOf(FilesystemAdapter::class, Storage::disk('disk_with_connection_string'));
+        self::assertInstanceOf(FilesystemAdapter::class, Storage::disk('disk_with_connection_string'));
     }
 
     #[Test]
-    public function it_can_be_created_from_driver_config_with_connection_array()
+    public function it_can_be_created_from_driver_config_with_connection_array(): void
     {
-        $this->assertInstanceOf(FilesystemAdapter::class, Storage::disk('disk_with_connection_config_array'));
+        self::assertInstanceOf(FilesystemAdapter::class, Storage::disk('disk_with_connection_config_array'));
     }
 
     #[Test]
-    public function it_can_connect_with_array_config()
+    public function it_can_connect_with_array_config(): void
     {
         $connector = new Connector;
 
-        $factory = $connector->connect([
-            'account_name' => 'test_account',
-            'account_key' => base64_encode('test_key'),
+        $filesystem = $connector
+            ->connect([
+                'account_name' => 'test_account',
+                'account_key' => base64_encode('test_key'),
+            ])
+            ->container('test-container');
+
+        self::assertSame(
+            'https://test_account.blob.core.windows.net/test-container/file.txt',
+            $filesystem->url('file.txt')
+        );
+    }
+
+    #[Test]
+    public function it_can_connect_with_connection_string(): void
+    {
+        $connector = new Connector;
+
+        $filesystem = $connector
+            ->connect('AccountName=test_account;AccountKey=' . base64_encode('test_key'))
+            ->container('test-container');
+
+        self::assertSame(
+            'https://test_account.blob.core.windows.net/test-container/file.txt',
+            $filesystem->url('file.txt')
+        );
+    }
+
+    #[Test]
+    public function it_can_connect_with_named_connection(): void
+    {
+        $connector = new Connector([
+            'my_connection' => [
+                'account_name' => 'test_account',
+                'account_key' => base64_encode('test_key'),
+            ],
         ]);
 
-        $this->assertInstanceOf(ContainerFilesystemFactory::class, $factory);
+        $filesystem = $connector->connect('my_connection')->container('test-container');
+
+        self::assertSame(
+            'https://test_account.blob.core.windows.net/test-container/file.txt',
+            $filesystem->url('file.txt')
+        );
     }
 
     #[Test]
-    public function it_can_connect_with_connection_string()
-    {
-        $connector = new Connector;
-
-        $factory = $connector->connect('AccountName=test_account;AccountKey=' . base64_encode('test_key'));
-
-        $this->assertInstanceOf(ContainerFilesystemFactory::class, $factory);
-    }
-
-    #[Test]
-    public function it_can_connect_with_named_connection()
+    public function it_uses_default_connection_when_null_passed(): void
     {
         $connector = new Connector([
             'default' => [
@@ -141,28 +168,16 @@ class ConnectorTest extends TestCase
             ],
         ]);
 
-        $factory = $connector->connect('default');
+        $filesystem = $connector->connect()->container('test-container');
 
-        $this->assertInstanceOf(ContainerFilesystemFactory::class, $factory);
+        self::assertSame(
+            'https://test_account.blob.core.windows.net/test-container/file.txt',
+            $filesystem->url('file.txt')
+        );
     }
 
     #[Test]
-    public function it_uses_default_connection_when_null_passed()
-    {
-        $connector = new Connector([
-            'default' => [
-                'account_name' => 'test_account',
-                'account_key' => base64_encode('test_key'),
-            ],
-        ]);
-
-        $factory = $connector->connect();
-
-        $this->assertInstanceOf(ContainerFilesystemFactory::class, $factory);
-    }
-
-    #[Test]
-    public function it_throws_when_default_connection_missing()
+    public function it_throws_when_default_connection_missing(): void
     {
         $connector = new Connector;
 
@@ -173,20 +188,23 @@ class ConnectorTest extends TestCase
     }
 
     #[Test]
-    public function it_can_use_connection_string_as_named_connection()
+    public function it_can_use_connection_string_as_named_connection(): void
     {
         $connector = new Connector([
             'default' => 'AccountName=test_account;AccountKey=' . base64_encode('test_key'),
         ]);
 
-        $factory = $connector->connect();
+        $filesystem = $connector->connect()->container('test-container');
 
-        $this->assertInstanceOf(ContainerFilesystemFactory::class, $factory);
+        self::assertSame(
+            'https://test_account.blob.core.windows.net/test-container/file.txt',
+            $filesystem->url('file.txt')
+        );
     }
 
     #[Test]
-    public function it_can_use_disk_with_named_connection_string()
+    public function it_can_use_disk_with_named_connection_string(): void
     {
-        $this->assertInstanceOf(FilesystemAdapter::class, Storage::disk('disk_with_named_connection_string'));
+        self::assertInstanceOf(FilesystemAdapter::class, Storage::disk('disk_with_named_connection_string'));
     }
 }
