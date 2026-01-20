@@ -41,7 +41,7 @@ class BlobStorageTest extends TestCase
      */
     private static function createContainerClient(): BlobContainerClient
     {
-        return BlobServiceClient::fromConnectionString((string) Connection::fromArray(self::DEVELOPMENT_CONNECTION))
+        return BlobServiceClient::fromConnectionString(Connection::fromArray(self::DEVELOPMENT_CONNECTION)->toString())
             ->getContainerClient('container');
     }
 

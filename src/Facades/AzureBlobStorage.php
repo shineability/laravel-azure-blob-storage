@@ -11,7 +11,7 @@ use Shineability\LaravelAzureBlobStorage\ContainerFilesystemFactory;
 
 /**
  * @method static ContainerFilesystemFactory connect(string|array|null $connection = null)
- * @method static FilesystemAdapter container(string $path, string $prefix = '', array $config = [])
+ * @method static FilesystemAdapter container(string $container, string $prefix = '', array $config = [])
  */
 class AzureBlobStorage extends Facade
 {

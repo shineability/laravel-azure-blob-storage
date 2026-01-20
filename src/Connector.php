@@ -5,30 +5,37 @@ declare(strict_types=1);
 namespace Shineability\LaravelAzureBlobStorage;
 
 use Illuminate\Filesystem\FilesystemAdapter;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 
 class Connector
 {
-    private array $connections;
-
-    public function __construct(array $connections = [])
-    {
-        $this->connections = $connections;
-    }
+    /**
+     * @param  array<string, string|array<string, string>>  $connections
+     */
+    public function __construct(
+        private array $connections = []
+    ) {}
 
     public function connect(string|array|null $connection = null): ContainerFilesystemFactory
     {
         if (is_array($connection)) {
-            return ContainerFilesystemFactory::forConnection($this->createConnection($connection));
+            return ContainerFilesystemFactory::forConnection(
+                Connection::fromArray($this->convertSnakeCaseKeysToPascalCase($connection))
+            );
         }
 
-        if (!Arr::exists($this->connections, $connection ??= 'default')) {
-            throw new InvalidArgumentException("Azure Blob Storage connection [{$connection}] is not configured.");
+        if (is_string($connection) && Connection::isValidConnectionString($connection)) {
+            return ContainerFilesystemFactory::forConnection(Connection::fromString($connection));
         }
 
-        return self::connect((array) Arr::get($this->connections, $connection));
+        $name = $connection ?? 'default';
+
+        if (!array_key_exists($name, $this->connections)) {
+            throw new InvalidArgumentException("Azure Blob Storage connection [{$name}] is not configured.");
+        }
+
+        return $this->connect($this->connections[$name]);
     }
 
     /**
@@ -39,15 +46,15 @@ class Connector
         return $this->connect()->container($container, $prefix, $config);
     }
 
-    private function createConnection(array $config): Connection
-    {
-        return Connection::create($this->convertSnakeCaseKeysToPascalCase($config));
-    }
-
+    /**
+     * @param  array<string, string>  $config
+     * @return array<string, string>
+     */
     private function convertSnakeCaseKeysToPascalCase(array $config): array
     {
+        /** @var array<string, string> */
         return collect($config)
-            ->mapWithKeys(fn ($value, $key) => [(string) Str::of($key)->pascal() => $value])
+            ->mapWithKeys(fn (string $value, string $key): array => [Str::pascal($key) => $value])
             ->toArray();
     }
 }

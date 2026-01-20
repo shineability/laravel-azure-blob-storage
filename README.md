@@ -15,70 +15,9 @@ composer require shineability/laravel-azure-blob-storage
 
 ## Usage
 
-### Disk configuration
+### Named connections
 
-The driver supports the following disk configuration options:
-
-- `driver` - must be set to `azure_blob_storage`
-- `container` - the name of the container
-- `prefix` - a prefix to prepend to all paths (**optional**)
-- `connection` - the name of the connection or connection config (see [**Connections**](#connections))
-
-Configure the disk in `config/filesystems.php`:
-
-```php
-'azure-disk-images' => [
-    'driver' => 'azure_blob_storage',
-    'container' => 'images',
-    'prefix' => 'backup',
-    'connection' => [
-        'account_name' => env('AZURE_BLOB_STORAGE_ACCOUNT_NAME'),
-        'account_key' => env('AZURE_BLOB_STORAGE_ACCOUNT_KEY'),
-        'default_endpoints_protocol' => 'http',
-        'blob_endpoint' => 'http://127.0.0.1:10000/devstoreaccount1'
-        ...
-    ],
-],
-```
-
-And access the disk using the `Storage` facade:
-
-```php
-Storage::disk('azure-disk-images')->get('backup/logo.png');
-```
-
-### Connections
-
-A connection string is required to access an Azure Blob Storage account and can be configured
-using an array containing the following **required** properties:
-
-- `account_name` - name of the storage account
-- `account_key` - access key of the storage account
-
-**Optional** properties include:
-
-- `default_endpoints_protocol` - specifies protocol to be used, defaults to `https`
-- `endpoint_suffix` - for storage services in different regions, defaults to `core.windows.net`
-- `blob_endpoint` - for storage endpoints mapped to a custom domain
-- `shared_access_signature` - if you want to connect using a SAS token
-
-For more information on how to configure a connection strings, check out the
-[**Azure Storage docs**](https://docs.microsoft.com/en-us/azure/storage/common/storage-configure-connection-string).
-
-You can configure a connection using an array in the driver config in `config/filesystems.php`:
-
-```php
-'azure-disk-images' => [
-    ...
-    'connection' => [
-        'account_name' => env('AZURE_BLOB_STORAGE_ACCOUNT_NAME'),
-        'account_key' => env('AZURE_BLOB_STORAGE_ACCOUNT_KEY'),
-        ...
-    ],
-],
-```
-
-You can also configure one or more connections in `config/filesystems.php` to reuse the same connection(s) for multiple disks:
+Define reusable connections in `config/filesystems.php`:
 
 ```php
 'azure_blob_storage' => [
@@ -86,122 +25,168 @@ You can also configure one or more connections in `config/filesystems.php` to re
         'default' => [
             'account_name' => env('AZURE_BLOB_STORAGE_ACCOUNT_NAME'),
             'account_key' => env('AZURE_BLOB_STORAGE_ACCOUNT_KEY'),
-            ...
         ],
-        'other_connection' => [
-            'account_name' => env('AZURE_BLOB_STORAGE_OTHER_ACCOUNT_NAME'),
-            'account_key' => env('AZURE_BLOB_STORAGE_OTHER_ACCOUNT_KEY'),
-            ...
+        'backup' => [
+            'account_name' => env('AZURE_BACKUP_ACCOUNT_NAME'),
+            'account_key' => env('AZURE_BACKUP_ACCOUNT_KEY'),
         ],
-        ...
+        // Or use a connection string directly
+        'external' => env('AZURE_EXTERNAL_CONNECTION_STRING'),
     ],
 ],
 ```
 
-To configure a disk, assign the name of the connection to the `connection` key in `config/filesystems.php`:
+### Disk configuration
+
+Configure a disk in `config/filesystems.php`:
 
 ```php
-'azure-disk-images' => [
-    'driver' => 'azure_blob_storage',
-    'container' => 'images',
-    'connection' => 'other_connection' // Use the connection configured in `config/filesystems.php` instead of an array
+'disks' => [
+    // Uses inline connection config
+    'azure-images' => [
+        'driver' => 'azure_blob_storage',
+        'container' => 'images',
+        'prefix' => 'backup',
+        'connection' => [
+            'account_name' => env('AZURE_BLOB_STORAGE_ACCOUNT_NAME'),
+            'account_key' => env('AZURE_BLOB_STORAGE_ACCOUNT_KEY'),
+        ],
+    ],
+
+    // Uses named connection (can be array or connection string)
+    'azure-backups' => [
+        'driver' => 'azure_blob_storage',
+        'container' => 'backups',
+        'connection' => 'backup',  // References named connection
+    ],
+
+    // Uses 'default' named connection when omitted
+    'azure-uploads' => [
+        'driver' => 'azure_blob_storage',
+        'container' => 'uploads',
+    ],
 ],
 ```
 
-If you don't specify a `connection` key in the driver config, the `default` connection will be used.
+Access the disk using the `Storage` facade:
 
-### Temporary Upload URLs
+```php
+Storage::disk('azure-images')->put('logo.png', $contents);
+```
 
-The driver supports generating temporary upload URLs for a given blob. This is useful when you want to allow users to upload files directly to Azure Blob Storage without exposing your storage account credentials.
+### Connection options
+
+| Property                     | Required | Default            | Description                              |
+|------------------------------|----------|--------------------|------------------------------------------|
+| `account_name`               | Yes      | -                  | Storage account name                     |
+| `account_key`                | Yes*     | -                  | Storage account access key               |
+| `shared_access_signature`    | Yes*     | -                  | SAS token (alternative to `account_key`) |
+| `default_endpoints_protocol` | No       | `https`            | Protocol to use                          |
+| `endpoint_suffix`            | No       | `core.windows.net` | Regional endpoint suffix                 |
+| `blob_endpoint`              | No       | -                  | Custom domain endpoint                   |
+
+\* Either `account_key` or `shared_access_signature` is required.
+
+For more information on connection strings, see the [Azure Storage docs](https://docs.microsoft.com/en-us/azure/storage/common/storage-configure-connection-string).
+
+### Temporary upload URLs
+
+Generate temporary upload URLs to allow direct uploads to Azure Blob Storage without exposing credentials:
 
 ```php
 use Illuminate\Support\Facades\Storage;
 
-['url' => $url, 'headers' => $headers] = Storage::temporaryUploadUrl(
+['url' => $url, 'headers' => $headers] = Storage::disk('azure-images')->temporaryUploadUrl(
     'logo.png', now()->addMinutes(5)
 );
 ```
 
-For more information on how to upload blobs using temporary URLs, check the
-[**Azure Storage docs**](https://learn.microsoft.com/en-us/rest/api/storageservices/put-blob).
+For more information, see the [Azure Storage docs](https://learn.microsoft.com/en-us/rest/api/storageservices/put-blob).
 
-### Using the `AzureBlobStorage` facade
+### Runtime container access
 
-If you have a storage account with multiple containers, you can use the `AzureBlobStorage` facade to create a filesystem
-for each container **at runtime** without having to separately configure a disk in `config/filesystems.php` for each container.
-
-Add a connection to `config/filesystems.php`:
-
-```php
-'azure_blob_storage' => [
-    'connections' => [
-        'your_connection' => [
-            'account_name' => env('AZURE_BLOB_STORAGE_ACCOUNT_NAME'),
-            'account_key' => env('AZURE_BLOB_STORAGE_ACCOUNT_KEY'),
-            ...
-        ],
-    ],
-],
-```
-
-Create a container filesystem at runtime:
+Use the `AzureBlobStorage` facade to create container filesystems at runtime without configuring separate disks:
 
 ```php
 use Shineability\LaravelAzureBlobStorage\Facades\AzureBlobStorage;
 
-$filesystem = AzureBlobStorage::connect('your_connection')->container('images');
+// Use the 'default' named connection
+$filesystem = AzureBlobStorage::container('images');
 
-echo $filesystem->url('logo.png'); 
+// Or explicitly connect to a named connection
+$filesystem = AzureBlobStorage::connect('backup')->container('images');
+
+$filesystem->put('photo.jpg', $contents);
+echo $filesystem->url('photo.jpg');
 ```
 
-If you omit the connection argument in the `connect()` method, the `default` connection will be used:
+You can also connect using an inline config array:
 
 ```php
-$filesystem = AzureBlobStorage::connect()->container('images');
+$filesystem = AzureBlobStorage::connect([
+    'account_name' => env('AZURE_BLOB_STORAGE_ACCOUNT_NAME'),
+    'account_key' => env('AZURE_BLOB_STORAGE_ACCOUNT_KEY'),
+])->container('images');
 ```
 
-An even shorter way of creating a container filesystem by connecting to the `default` connection,
-is to call the `container()` method directly on the facade:
+Or using a connection string:
 
-```php  
-$filesystem = AzureBlobStorage::container('images');
+```php
+$filesystem = AzureBlobStorage::connect(env('AZURE_BLOB_STORAGE_CONNECTION_STRING'))
+    ->container('images');
 ```
-
-The facade is bound to the `Connector` class, which is used to create a container filesystem factory for a given connection.
 
 ## Testing
 
+Run unit tests:
+
 ```bash
 composer test:unit
+```
+
+Run feature tests (requires [Azurite](https://github.com/Azure/Azurite) on port 10000):
+
+```bash
+composer test:feature
+```
+
+Run static analysis:
+
+```bash
 composer test:types
+```
+
+Run linting:
+
+```bash
 composer lint
 ```
 
-Run **linting**, **static analysis** and **unit tests** in one go.
+Run all quality checks (unit tests, static analysis, linting):
 
 ```bash
 composer test
 ```
 
-### Run GitHub test workflow locally
+### Run GitHub workflow locally
 
-You can run the Github workflows locally with [act](https://github.com/nektos/act). To run the tests locally, run:
+Run the GitHub workflows locally with [act](https://github.com/nektos/act):
 
-```
+```bash
 act -j phpunit -P ubuntu-latest=shivammathur/node:latest
 ```
 
-To run tests for a specific PHP and Laravel version, run:
+Run tests for a specific PHP and Laravel version:
 
-```
+```bash
 act -j phpunit --matrix php:8.3 --matrix laravel:"11.*" -P ubuntu-latest=shivammathur/node:latest
 ```
 
-Available `matrix` options are available in the [workflow file](.github/workflows/tests.yml).
+Available matrix options are in the [workflow file](.github/workflows/tests.yml).
 
 ## Changelog
 
-Please read the [**CHANGELOG**](CHANGELOG.md) for more information on what has changed recently.
+Please see the [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
 
 ## Alternatives
 
