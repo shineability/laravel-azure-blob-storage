@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Shineability\LaravelAzureBlobStorage\Tests;
+namespace Shineability\LaravelAzureBlobStorage\Tests\Unit;
 
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\Test;
+use Shineability\LaravelAzureBlobStorage\Tests\TestCase;
 
 class StorageDriverTest extends TestCase
 {
@@ -23,14 +25,16 @@ class StorageDriverTest extends TestCase
         ]);
     }
 
-    public function test_it_can_generate_a_public_url()
+    #[Test]
+    public function it_can_generate_a_public_url()
     {
         $publicUrl = 'https://account_name.blob.core.windows.net/container/prefix/foobar.txt';
 
         $this->assertEquals($publicUrl, Storage::disk('azure_blob_storage_disk')->url('foobar.txt'));
     }
 
-    public function test_it_can_generate_a_temporary_url()
+    #[Test]
+    public function it_can_generate_a_temporary_url()
     {
         $expirationDate = now()->addHour();
 
@@ -47,7 +51,8 @@ class StorageDriverTest extends TestCase
         );
     }
 
-    public function test_it_can_generate_a_temporary_upload_url()
+    #[Test]
+    public function it_can_generate_a_temporary_upload_url()
     {
         $expirationDate = now()->addHour();
 

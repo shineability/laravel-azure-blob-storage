@@ -2,17 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Shineability\LaravelAzureBlobStorage\Tests;
+namespace Shineability\LaravelAzureBlobStorage\Tests\Unit;
 
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Shineability\LaravelAzureBlobStorage\Connection;
 
 class ConnectionTest extends TestCase
 {
-    public function test_it_can_be_created(): void
+    #[Test]
+    public function it_can_be_created(): void
     {
-        $connection = Connection::create([
+        $connection = Connection::fromArray([
             'AccountName' => 'account_name',
             'AccountKey' => $accountKey = base64_encode('account_key'),
             'EndpointSuffix' => 'core.linux.net',
@@ -28,32 +30,35 @@ class ConnectionTest extends TestCase
         $this->assertStringContainsString('EndpointSuffix=core.linux.net', $connectionString);
     }
 
-    public function test_it_requires_valid_keys()
+    #[Test]
+    public function it_requires_valid_keys()
     {
         $this->expectException(InvalidArgumentException::class);
 
-        Connection::create([
+        Connection::fromArray([
             'AccountKey' => 'account_key',
             'EndpointSuffix' => 'core.linux.net',
             'InvalidKey' => 'foobar',
         ]);
     }
 
-    public function test_it_requires_an_account_name()
+    #[Test]
+    public function it_requires_an_account_name()
     {
         $this->expectException(InvalidArgumentException::class);
 
-        Connection::create([
+        Connection::fromArray([
             'AccountKey' => 'account_key',
             'EndpointSuffix' => 'core.linux.net',
         ]);
     }
 
-    public function test_it_requires_an_account_key()
+    #[Test]
+    public function it_requires_an_account_key()
     {
         $this->expectException(InvalidArgumentException::class);
 
-        Connection::create([
+        Connection::fromArray([
             'AccountName' => 'account_name',
             'EndpointSuffix' => 'core.linux.net',
         ]);

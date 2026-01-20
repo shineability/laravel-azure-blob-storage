@@ -14,6 +14,8 @@ grumphp:
       configuration: phpstan.neon.dist
       memory_limit: '-1'
       triggered_by: [ 'php' ]
+      ignore_patterns:
+        - '/^tests/'
     git_blacklist:
       keywords:
         - '\bdie\('

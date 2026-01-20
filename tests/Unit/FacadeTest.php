@@ -2,13 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Shineability\LaravelAzureBlobStorage\Tests;
+namespace Shineability\LaravelAzureBlobStorage\Tests\Unit;
 
 use GrahamCampbell\TestBenchCore\FacadeTrait;
 use Illuminate\Contracts\Filesystem\Filesystem as FilesystemContract;
+use PHPUnit\Framework\Attributes\Test;
 use Shineability\LaravelAzureBlobStorage\Connector;
 use Shineability\LaravelAzureBlobStorage\ContainerFilesystemFactory;
 use Shineability\LaravelAzureBlobStorage\Facades\AzureBlobStorage;
+use Shineability\LaravelAzureBlobStorage\Tests\TestCase;
 
 class FacadeTest extends TestCase
 {
@@ -30,12 +32,14 @@ class FacadeTest extends TestCase
         ]);
     }
 
-    public function test_it_can_create_a_container_filesystem_for_the_default_connection_using_a_shortcut()
+    #[Test]
+    public function it_can_create_a_container_filesystem_for_the_default_connection_using_a_shortcut()
     {
         $this->assertInstanceOf(FilesystemContract::class, AzureBlobStorage::container('container'));
     }
 
-    public function test_it_can_connect_to_a_file_storage()
+    #[Test]
+    public function it_can_connect_to_a_file_storage()
     {
         $this->assertInstanceOf(ContainerFilesystemFactory::class, AzureBlobStorage::connect());
         $this->assertInstanceOf(ContainerFilesystemFactory::class, AzureBlobStorage::connect('custom'));
