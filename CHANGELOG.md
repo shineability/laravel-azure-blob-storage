@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Add status badges to `README.md`
+
 ## [1.0.0] - 2026-01-21
 
 ### Added
