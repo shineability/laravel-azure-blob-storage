@@ -6,17 +6,17 @@
 
 ### Added
 
-- Support for SAS token authentication ([**4757dad**](https://github.com/shineability/laravel-azure-blob-storage/commit/4757dad))
-- Support for connection strings in named connections ([**878bfbf**](https://github.com/shineability/laravel-azure-blob-storage/commit/878bfbf))
+- Support for SAS token authentication ([**36a9a4c**](https://github.com/shineability/laravel-azure-blob-storage/commit/36a9a4c))
+- Support for connection strings in named connections ([**eb45659**](https://github.com/shineability/laravel-azure-blob-storage/commit/eb45659))
 
 ### Fixed
 
-- Pass options through in `temporaryUrl()` ([**dfe94d6**](https://github.com/shineability/laravel-azure-blob-storage/commit/dfe94d6))
+- Pass options through in `temporaryUrl()` ([**51ff0ef**](https://github.com/shineability/laravel-azure-blob-storage/commit/51ff0ef))
 
 ### Changed
 
-- Make value object classes `final readonly` ([**504eb90**](https://github.com/shineability/laravel-azure-blob-storage/commit/504eb90))
-- Require `azure-oss/storage-blob-flysystem` ^1.4 ([**2fe429b**](https://github.com/shineability/laravel-azure-blob-storage/commit/2fe429b))
+- Make value object classes `final readonly` ([**107e836**](https://github.com/shineability/laravel-azure-blob-storage/commit/107e836))
+- Require `azure-oss/storage-blob-flysystem` ^1.4 ([**2351eae**](https://github.com/shineability/laravel-azure-blob-storage/commit/2351eae))
 
 ## [0.2.0] - 2025-04-20
 
