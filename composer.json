@@ -51,8 +51,10 @@
         "test:unit": "vendor/bin/testbench package:test --testsuite Unit",
         "test:feature": "vendor/bin/testbench package:test --testsuite Feature",
         "test:types": "vendor/bin/phpstan analyze --memory-limit=-1",
+        "test:coverage": "php -d pcov.enabled=1 vendor/bin/testbench package:test --coverage",
         "test": [
             "@test:unit",
+            "@test:feature",
             "@test:types",
             "@lint"
         ]

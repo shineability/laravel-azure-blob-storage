@@ -1,3 +1,4 @@
+
 # Azure Blob Storage filesystem driver for Laravel
 
 This package provides a configurable **Azure Blob Storage** filesystem driver for Laravel allowing the creation of container filesystems at runtime.
@@ -53,10 +54,17 @@ Configure a disk in `config/filesystems.php`:
         ],
     ],
 
-    // Uses named connection (can be array or connection string)
+    // Uses a connection string directly
     'azure-backups' => [
         'driver' => 'azure_blob_storage',
         'container' => 'backups',
+        'connection' => env('AZURE_BLOB_STORAGE_CONNECTION_STRING'),
+    ],
+
+    // Uses a named connection
+    'azure-documents' => [
+        'driver' => 'azure_blob_storage',
+        'container' => 'documents',
         'connection' => 'backup',  // References named connection
     ],
 
@@ -85,9 +93,9 @@ Storage::disk('azure-images')->put('logo.png', $contents);
 | `endpoint_suffix`            | No       | `core.windows.net` | Regional endpoint suffix                 |
 | `blob_endpoint`              | No       | -                  | Custom domain endpoint                   |
 
-\* Either `account_key` or `shared_access_signature` is required.
+\* Either `account_key` or `shared_access_signature` is **required**.
 
-For more information on connection strings, see the [Azure Storage docs](https://docs.microsoft.com/en-us/azure/storage/common/storage-configure-connection-string).
+For more information on connection strings, see the [**Azure Storage docs**](https://docs.microsoft.com/en-us/azure/storage/common/storage-configure-connection-string).
 
 ### Temporary upload URLs
 
@@ -101,7 +109,7 @@ use Illuminate\Support\Facades\Storage;
 );
 ```
 
-For more information, see the [Azure Storage docs](https://learn.microsoft.com/en-us/rest/api/storageservices/put-blob).
+For more information, see the [**Azure Storage docs**](https://learn.microsoft.com/en-us/rest/api/storageservices/put-blob).
 
 ### Runtime container access
 
@@ -117,10 +125,11 @@ $filesystem = AzureBlobStorage::container('images');
 $filesystem = AzureBlobStorage::connect('backup')->container('images');
 
 $filesystem->put('photo.jpg', $contents);
+
 echo $filesystem->url('photo.jpg');
 ```
 
-You can also connect using an inline config array:
+You can also connect using an inline **config array**:
 
 ```php
 $filesystem = AzureBlobStorage::connect([
@@ -129,7 +138,7 @@ $filesystem = AzureBlobStorage::connect([
 ])->container('images');
 ```
 
-Or using a connection string:
+Or using a **connection string**:
 
 ```php
 $filesystem = AzureBlobStorage::connect(env('AZURE_BLOB_STORAGE_CONNECTION_STRING'))
@@ -162,15 +171,45 @@ Run linting:
 composer lint
 ```
 
-Run all quality checks (unit tests, static analysis, linting):
+Run all quality checks (unit tests, feature tests, static analysis, linting):
 
 ```bash
 composer test
 ```
 
+### Run tests with Docker
+
+For consistent testing with code coverage, use Docker via the Makefile:
+
+```bash
+# Build the Docker image (runs automatically when needed)
+make build
+
+# Run all quality checks
+make test
+
+# Run unit tests only
+make test-unit
+
+# Run feature tests only
+make test-feature
+
+# Run tests with coverage report
+make test-coverage
+
+# Run static analysis
+make test-types
+
+# Run linting
+make lint
+
+# Clean up (remove containers and build artifacts)
+make clean
+```
+
 ### Run GitHub workflow locally
 
-Run the GitHub workflows locally with [act](https://github.com/nektos/act):
+Run the GitHub workflows locally with [**act**](https://github.com/nektos/act):
 
 ```bash
 act -j unit-tests -P ubuntu-latest=shivammathur/node:latest
@@ -182,11 +221,11 @@ Run tests for a specific PHP and Laravel version:
 act -j unit-tests --matrix php:8.3 --matrix laravel:"11.*" -P ubuntu-latest=shivammathur/node:latest
 ```
 
-Available matrix options are in the [workflow file](.github/workflows/unit-tests.yml).
+Available matrix options are in the [**workflow file**](.github/workflows/unit-tests.yml).
 
 ## Changelog
 
-Please see the [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
+Please see the [**CHANGELOG**](CHANGELOG.md) for more information on what has changed recently.
 
 ## Alternatives
 

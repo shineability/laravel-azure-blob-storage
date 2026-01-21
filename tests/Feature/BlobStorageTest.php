@@ -15,33 +15,28 @@ use Shineability\LaravelAzureBlobStorage\Tests\TestCase;
 
 class BlobStorageTest extends TestCase
 {
-    private const AZURITE_HOST = '127.0.0.1';
-
     private const AZURITE_PORT = 10000;
 
     private const CONTAINER_NAME = 'container';
 
-    private const DEVELOPMENT_CONNECTION = [
-        'DefaultEndpointsProtocol' => 'http',
-        'BlobEndpoint' => 'http://127.0.0.1:10000/devstoreaccount1',
-        'AccountName' => 'devstoreaccount1',
-        'AccountKey' => 'Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==',
-    ];
+    private static function azuriteHost(): string
+    {
+        $host = getenv('AZURITE_HOST');
+
+        return is_string($host) ? $host : '127.0.0.1';
+    }
 
     /**
-     * @throws \AzureOss\Storage\Blob\Exceptions\InvalidConnectionStringException
+     * @return array{DefaultEndpointsProtocol: string, BlobEndpoint: string, AccountName: string, AccountKey: string}
      */
-    public static function setUpBeforeClass(): void
+    private static function developmentConnection(): array
     {
-        if (!self::isAzuriteRunning()) {
-            self::markTestSkipped('Azurite emulator is not running on port 10000');
-        }
-
-        $connectionString = Connection::fromArray(self::DEVELOPMENT_CONNECTION)->toString();
-
-        $containerClient = BlobServiceClient::fromConnectionString($connectionString)->getContainerClient(self::CONTAINER_NAME);
-        $containerClient->deleteIfExists();
-        $containerClient->create(new CreateContainerOptions(PublicAccessType::CONTAINER));
+        return [
+            'DefaultEndpointsProtocol' => 'http',
+            'BlobEndpoint' => sprintf('http://%s:%d/devstoreaccount1', self::azuriteHost(), self::AZURITE_PORT),
+            'AccountName' => 'devstoreaccount1',
+            'AccountKey' => 'Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==',
+        ];
     }
 
     protected function getEnvironmentSetUp($app): void
@@ -52,13 +47,19 @@ class BlobStorageTest extends TestCase
             'driver' => 'azure_blob_storage',
             'container' => self::CONTAINER_NAME,
             'prefix' => 'prefix',
-            'connection' => Connection::fromArray(self::DEVELOPMENT_CONNECTION)->toString(),
+            'connection' => Connection::fromArray(self::developmentConnection())->toString(),
         ]);
     }
 
     #[Test]
     public function it_works_using_the_azurite_emulator(): void
     {
+        if (!self::isAzuriteRunning()) {
+            self::markTestSkipped(sprintf('Azurite emulator is not running on %s:%d', self::azuriteHost(), self::AZURITE_PORT));
+        }
+
+        $this->createContainer();
+
         $disk = Storage::disk('azure_blob_storage_disk');
 
         $disk->deleteDirectory('');
@@ -87,9 +88,18 @@ class BlobStorageTest extends TestCase
         self::assertCount(0, $disk->allFiles());
     }
 
+    private function createContainer(): void
+    {
+        $connectionString = Connection::fromArray(self::developmentConnection())->toString();
+
+        $containerClient = BlobServiceClient::fromConnectionString($connectionString)->getContainerClient(self::CONTAINER_NAME);
+        $containerClient->deleteIfExists();
+        $containerClient->create(new CreateContainerOptions(PublicAccessType::CONTAINER));
+    }
+
     private static function isAzuriteRunning(): bool
     {
-        $connection = @fsockopen(self::AZURITE_HOST, self::AZURITE_PORT, $errno, $errstr, 1);
+        $connection = @fsockopen(self::azuriteHost(), self::AZURITE_PORT, $errno, $errstr, 1);
 
         if ($connection === false) {
             return false;

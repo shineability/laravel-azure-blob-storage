@@ -6,7 +6,6 @@ includes:
 parameters:
     paths:
         - src
-    excludePaths:
         - tests
     level: 9
     ignoreErrors:
