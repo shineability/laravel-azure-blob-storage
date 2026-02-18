@@ -63,5 +63,15 @@
         "allow-plugins": {
             "phpro/grumphp": true
         }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Shineability\\LaravelAzureBlobStorage\\AzureBlobStorageServiceProvider"
+            ],
+            "aliases": {
+                "AzureBlobStorage": "Shineability\\LaravelAzureBlobStorage\\Facades\\AzureBlobStorage"
+            }
+        }
     }
 }
