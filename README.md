@@ -15,6 +15,8 @@ This package provides a configurable **Azure Blob Storage** filesystem driver fo
 composer require shineability/laravel-azure-blob-storage
 ```
 
+The service provider and `AzureBlobStorage` facade are auto-discovered by Laravel.
+
 ## Usage
 
 ### Named connections
