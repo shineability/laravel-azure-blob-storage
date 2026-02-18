@@ -2,8 +2,11 @@
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-02-18
+
 ### Added
 
+- Laravel package auto-discovery for service provider and facade ([**aa2d378**](https://github.com/shineability/laravel-azure-blob-storage/commit/aa2d378))
 - Add status badges to `README.md`
 
 ## [1.0.0] - 2026-01-21
@@ -32,7 +35,8 @@
 
 - Initial release
 
-[Unreleased]: https://github.com/shineability/laravel-azure-blob-storage/compare/1.0.0...HEAD
+[Unreleased]: https://github.com/shineability/laravel-azure-blob-storage/compare/1.1.0...HEAD
+[1.1.0]: https://github.com/shineability/laravel-azure-blob-storage/compare/1.0.0...1.1.0
 [1.0.0]: https://github.com/shineability/laravel-azure-blob-storage/compare/0.2.0...1.0.0
 [0.2.0]: https://github.com/shineability/laravel-azure-blob-storage/compare/0.1.0...0.2.0
 [0.1.0]: https://github.com/shineability/laravel-azure-blob-storage/releases/tag/0.1.0
