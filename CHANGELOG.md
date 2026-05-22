@@ -2,6 +2,17 @@
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-05-22
+
+### Added
+
+- Laravel 13 support ([**2f8e915**](https://github.com/shineability/laravel-azure-blob-storage/commit/2f8e915))
+
+### Changed
+
+- Drop Laravel 11 support (reached end-of-life March 12, 2026) ([**2f8e915**](https://github.com/shineability/laravel-azure-blob-storage/commit/2f8e915))
+- Update `README.md` installation section ([**a585070**](https://github.com/shineability/laravel-azure-blob-storage/commit/a585070))
+
 ## [1.1.0] - 2026-02-18
 
 ### Added
@@ -35,7 +46,8 @@
 
 - Initial release
 
-[Unreleased]: https://github.com/shineability/laravel-azure-blob-storage/compare/1.1.0...HEAD
+[Unreleased]: https://github.com/shineability/laravel-azure-blob-storage/compare/1.2.0...HEAD
+[1.2.0]: https://github.com/shineability/laravel-azure-blob-storage/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/shineability/laravel-azure-blob-storage/compare/1.0.0...1.1.0
 [1.0.0]: https://github.com/shineability/laravel-azure-blob-storage/compare/0.2.0...1.0.0
 [0.2.0]: https://github.com/shineability/laravel-azure-blob-storage/compare/0.1.0...0.2.0
