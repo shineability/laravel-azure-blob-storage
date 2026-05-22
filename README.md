@@ -7,7 +7,7 @@ This package provides a configurable **Azure Blob Storage** filesystem driver fo
 ## Minimum requirements
 
 - **PHP 8.2** or higher
-- **Laravel 11.x** or higher
+- **Laravel 12.x** or higher
 
 ## Installation
 

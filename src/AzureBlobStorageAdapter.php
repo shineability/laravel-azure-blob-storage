@@ -7,6 +7,7 @@ namespace Shineability\LaravelAzureBlobStorage;
 use AzureOss\FlysystemAzureBlobStorage\AzureBlobStorageAdapter as FlysystemAdapter;
 use AzureOss\Storage\Blob\BlobContainerClient;
 use AzureOss\Storage\Blob\BlobServiceClient;
+use AzureOss\Storage\Blob\Exceptions\InvalidConnectionStringException;
 use Illuminate\Filesystem\FilesystemAdapter;
 use League\Flysystem\Config;
 use League\Flysystem\Filesystem;
@@ -19,7 +20,7 @@ final class AzureBlobStorageAdapter extends FilesystemAdapter
     private BlobContainerClient $containerClient;
 
     /**
-     * @throws \AzureOss\Storage\Blob\Exceptions\InvalidConnectionStringException
+     * @throws InvalidConnectionStringException
      */
     public function __construct(Connection $connection, string $container, string $prefix = '', array $config = [])
     {

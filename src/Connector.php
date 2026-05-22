@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Shineability\LaravelAzureBlobStorage;
 
+use AzureOss\Storage\Blob\Exceptions\InvalidConnectionStringException;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
@@ -39,7 +40,7 @@ final readonly class Connector
     }
 
     /**
-     * @throws \AzureOss\Storage\Blob\Exceptions\InvalidConnectionStringException
+     * @throws InvalidConnectionStringException
      */
     public function container(string $container, string $prefix = '', array $config = []): FilesystemAdapter
     {
