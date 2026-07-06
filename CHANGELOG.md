@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-07-06
+
+### Changed
+
+- Require `azure-oss/storage-blob-flysystem` ^2.0 ([**23768d8**](https://github.com/shineability/laravel-azure-blob-storage/commit/23768d8)). The package's own API is unchanged, but apps that also require `azure-oss/storage*` directly or catch its removed exception classes should review the [azure-oss upgrade guide](https://github.com/Azure-OSS/azure-storage-blob-php/blob/main/UPGRADE.md). Temporary URLs now percent-encode the SAS expiry timestamp.
+
 ## [1.2.0] - 2026-05-22
 
 ### Added
@@ -46,7 +52,8 @@
 
 - Initial release
 
-[Unreleased]: https://github.com/shineability/laravel-azure-blob-storage/compare/1.2.0...HEAD
+[Unreleased]: https://github.com/shineability/laravel-azure-blob-storage/compare/1.3.0...HEAD
+[1.3.0]: https://github.com/shineability/laravel-azure-blob-storage/compare/1.2.0...1.3.0
 [1.2.0]: https://github.com/shineability/laravel-azure-blob-storage/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/shineability/laravel-azure-blob-storage/compare/1.0.0...1.1.0
 [1.0.0]: https://github.com/shineability/laravel-azure-blob-storage/compare/0.2.0...1.0.0
