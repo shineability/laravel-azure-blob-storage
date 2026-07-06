@@ -47,7 +47,7 @@ class StorageDriverTest extends TestCase
 
         self::assertMatchesRegularExpression(
             sprintf('/se=%sT%sZ/', $expirationDate->format('Y-m-d'), $expirationDate->format('H:i:s')),
-            $temporaryUrl
+            urldecode($temporaryUrl)
         );
     }
 
@@ -68,7 +68,7 @@ class StorageDriverTest extends TestCase
 
         self::assertMatchesRegularExpression(
             sprintf('/se=%sT%sZ/', $expirationDate->format('Y-m-d'), $expirationDate->format('H:i:s')),
-            $temporaryUpload['url']
+            urldecode($temporaryUpload['url'])
         );
 
         self::assertArraySubset(['x-ms-blob-type' => 'BlockBlob'], $temporaryUpload['headers']);
