@@ -1,4 +1,4 @@
-.PHONY: help build test test-unit test-feature test-coverage test-types lint clean
+.PHONY: help build install deps test test-unit test-feature test-coverage test-types lint clean
 
 .DEFAULT_GOAL := help
 
@@ -8,6 +8,7 @@ help:
 	@echo "Commands:"
 	@echo ""
 	@echo "  build          Build the Docker image"
+	@echo "  install        (Re)install dependencies in the container"
 	@echo "  test           Run all quality checks (unit, feature, types, lint)"
 	@echo "  test-unit      Run unit tests"
 	@echo "  test-feature   Run feature tests (requires Azurite)"
@@ -23,24 +24,31 @@ help:
 
 build: .docker-built
 
-test: .docker-built
+install: .docker-built
+	docker compose run --rm php composer update --no-interaction --no-progress
+
+# Install dependencies when the container's vendor/ is missing or older than composer.json/Dockerfile
+deps: .docker-built
+	docker compose run --rm php sh -c '[ vendor/autoload.php -nt composer.json ] && [ vendor/autoload.php -nt Dockerfile ] || composer update --no-interaction --no-progress'
+
+test: deps
 	docker compose run --rm php composer test
 
-test-unit: .docker-built
+test-unit: deps
 	docker compose run --rm php composer test:unit
 
-test-feature: .docker-built
+test-feature: deps
 	docker compose run --rm php composer test:feature
 
-test-coverage: .docker-built
+test-coverage: deps
 	docker compose run --rm php composer test:coverage
 
-test-types: .docker-built
+test-types: deps
 	docker compose run --rm php composer test:types
 
-lint: .docker-built
+lint: deps
 	docker compose run --rm php composer lint
 
 clean:
-	docker compose down
+	docker compose down --volumes
 	rm -rf build/ .docker-built

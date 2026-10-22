@@ -188,6 +188,9 @@ For consistent testing with code coverage, use Docker via the Makefile:
 # Build the Docker image (runs automatically when needed)
 make build
 
+# (Re)install dependencies in the container (runs automatically when needed)
+make install
+
 # Run all quality checks
 make test
 

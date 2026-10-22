@@ -12,4 +12,7 @@ RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
 
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
+# Dependencies live in the container's own vendor volume, so never write the host's composer.lock
+RUN composer config --global lock false
+
 WORKDIR /app

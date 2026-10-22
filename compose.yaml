@@ -5,6 +5,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - .:/app
+      - vendor:/app/vendor
     working_dir: /app
     environment:
       AZURITE_HOST: azurite
@@ -22,3 +23,6 @@ services:
       interval: 5s
       timeout: 3s
       retries: 5
+
+volumes:
+  vendor:
