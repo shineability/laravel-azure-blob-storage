@@ -73,4 +73,16 @@ class StorageDriverTest extends TestCase
 
         self::assertArraySubset(['x-ms-blob-type' => 'BlockBlob'], $temporaryUpload['headers']);
     }
+
+    #[Test]
+    public function it_passes_options_to_the_temporary_upload_url(): void
+    {
+        $temporaryUpload = Storage::disk('azure_blob_storage_disk')->temporaryUploadUrl('foobar.txt', now()->addHour(), [
+            'permissions' => 'cw',
+            'httpHeaders' => ['contentDisposition' => 'attachment'],
+        ]);
+
+        self::assertMatchesRegularExpression('/sp=cw/', $temporaryUpload['url']);
+        self::assertMatchesRegularExpression('/rscd=attachment/', $temporaryUpload['url']);
+    }
 }

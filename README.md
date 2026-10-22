@@ -112,6 +112,14 @@ use Illuminate\Support\Facades\Storage;
 );
 ```
 
+Upload URLs get write (`w`) permission by default. Pass options to override the SAS permissions or set response headers:
+
+```php
+['url' => $url, 'headers' => $headers] = Storage::disk('azure-images')->temporaryUploadUrl(
+    'logo.png', now()->addMinutes(5), ['permissions' => 'cw']
+);
+```
+
 For more information, see the [**Azure Storage docs**](https://learn.microsoft.com/en-us/rest/api/storageservices/put-blob).
 
 ### Runtime container access

@@ -46,7 +46,7 @@ final class AzureBlobStorageAdapter extends FilesystemAdapter
     public function temporaryUploadUrl($path, $expiration, array $options = []): array
     {
         return [
-            'url' => $this->adapter->temporaryUrl($path, $expiration, new Config(['permissions' => 'w'])),
+            'url' => $this->adapter->temporaryUrl($path, $expiration, new Config(['permissions' => 'w', ...$options])),
             'headers' => [
                 'x-ms-blob-type' => 'BlockBlob',
             ],
