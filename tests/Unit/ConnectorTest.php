@@ -89,10 +89,11 @@ class ConnectorTest extends TestCase
     #[Test]
     public function it_throws_when_named_connection_not_configured(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Azure Blob Storage connection [invalid_string_not_a_connection] is not configured.');
-
-        Storage::disk('disk_with_invalid_connection');
+        $this->assertThrows(
+            fn () => Storage::disk('disk_with_invalid_connection'),
+            InvalidArgumentException::class,
+            'Azure Blob Storage connection [invalid_string_not_a_connection] is not configured.',
+        );
     }
 
     #[Test]
@@ -181,10 +182,11 @@ class ConnectorTest extends TestCase
     {
         $connector = new Connector;
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Azure Blob Storage connection [default] is not configured.');
-
-        $connector->connect();
+        $this->assertThrows(
+            fn () => $connector->connect(),
+            InvalidArgumentException::class,
+            'Azure Blob Storage connection [default] is not configured.',
+        );
     }
 
     #[Test]

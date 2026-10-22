@@ -74,8 +74,9 @@ class ConnectionTest extends TestCase
     #[Test]
     public function it_requires_either_account_key_or_sas_token(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Connection must include either "AccountKey" or "SharedAccessSignature".');
+        $this->expectExceptionObject(
+            new InvalidArgumentException('Connection must include either "AccountKey" or "SharedAccessSignature".')
+        );
 
         Connection::fromArray([
             'AccountName' => 'account_name',
