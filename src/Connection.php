@@ -50,7 +50,8 @@ final readonly class Connection
     {
         /** @var array<string, string> $values */
         $values = collect(explode(';', $connectionString))
-            ->map(fn (string $pair): array => explode('=', $pair, 2))
+            ->filter(fn (string $pair): bool => $pair !== '')
+            ->map(fn (string $pair): array => explode('=', $pair, 2) + [1 => ''])
             ->mapWithKeys(fn (array $pair): array => [$pair[0] => $pair[1]])
             ->toArray();
 

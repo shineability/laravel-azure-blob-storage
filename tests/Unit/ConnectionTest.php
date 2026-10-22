@@ -48,6 +48,30 @@ class ConnectionTest extends TestCase
     }
 
     #[Test]
+    public function it_ignores_empty_segments_in_a_connection_string(): void
+    {
+        $connection = Connection::fromString(
+            'AccountName=devstoreaccount1;;AccountKey=account_key;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;'
+        );
+
+        $connectionString = $connection->toString();
+
+        self::assertStringContainsString('AccountName=devstoreaccount1', $connectionString);
+        self::assertStringContainsString('AccountKey=account_key', $connectionString);
+        self::assertStringContainsString('BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1', $connectionString);
+    }
+
+    #[Test]
+    public function it_rejects_a_connection_string_segment_without_a_value(): void
+    {
+        $this->expectExceptionObject(
+            new InvalidArgumentException('Expected one of: "AccountName", "AccountKey", "BlobEndpoint", "DefaultEndpointsProtocol", "EndpointSuffix", "SharedAccessSignature". Got: "invalid_segment"')
+        );
+
+        Connection::fromString('AccountName=account_name;invalid_segment;AccountKey=account_key');
+    }
+
+    #[Test]
     public function it_requires_valid_keys(): void
     {
         $this->expectException(InvalidArgumentException::class);
