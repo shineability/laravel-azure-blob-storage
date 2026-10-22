@@ -142,6 +142,40 @@ class ConnectorTest extends TestCase
     }
 
     #[Test]
+    public function it_can_connect_with_portal_sas_connection_string(): void
+    {
+        $connector = new Connector;
+
+        $filesystem = $connector
+            ->connect(
+                'BlobEndpoint=https://test_account.blob.core.windows.net/;'
+                . 'QueueEndpoint=https://test_account.queue.core.windows.net/;'
+                . 'FileEndpoint=https://test_account.file.core.windows.net/;'
+                . 'TableEndpoint=https://test_account.table.core.windows.net/;'
+                . 'SharedAccessSignature=sv=2024-11-04&ss=b&srt=sco&sp=rwdlac&se=2027-01-01T00:00:00Z&sig=signature'
+            )
+            ->container('test-container');
+
+        self::assertStringStartsWith(
+            'https://test_account.blob.core.windows.net/test-container/file.txt',
+            $filesystem->url('file.txt')
+        );
+    }
+
+    #[Test]
+    public function it_can_connect_with_development_storage_connection_string(): void
+    {
+        $connector = new Connector;
+
+        $filesystem = $connector->connect('UseDevelopmentStorage=true')->container('test-container');
+
+        self::assertSame(
+            'http://127.0.0.1:10000/devstoreaccount1/test-container/file.txt',
+            $filesystem->url('file.txt')
+        );
+    }
+
+    #[Test]
     public function it_can_connect_with_named_connection(): void
     {
         $connector = new Connector([

@@ -48,6 +48,46 @@ class ConnectionTest extends TestCase
     }
 
     #[Test]
+    public function it_can_be_created_with_blob_endpoint_and_shared_access_signature(): void
+    {
+        $connection = Connection::fromArray([
+            'BlobEndpoint' => 'https://account_name.blob.core.windows.net/',
+            'QueueEndpoint' => 'https://account_name.queue.core.windows.net/',
+            'FileEndpoint' => 'https://account_name.file.core.windows.net/',
+            'TableEndpoint' => 'https://account_name.table.core.windows.net/',
+            'SharedAccessSignature' => 'sv=2023-01-03&ss=b&srt=sco&sp=r&se=2025-01-01',
+        ]);
+
+        $connectionString = $connection->toString();
+
+        self::assertStringContainsString('BlobEndpoint=https://account_name.blob.core.windows.net/', $connectionString);
+        self::assertStringContainsString('SharedAccessSignature=sv=2023-01-03&ss=b&srt=sco&sp=r&se=2025-01-01', $connectionString);
+    }
+
+    #[Test]
+    public function it_expands_the_development_storage_shortcut(): void
+    {
+        $connectionString = Connection::fromString('UseDevelopmentStorage=true')->toString();
+
+        self::assertStringContainsString('DefaultEndpointsProtocol=http;', $connectionString);
+        self::assertStringContainsString('AccountName=devstoreaccount1', $connectionString);
+        self::assertStringContainsString('AccountKey=', $connectionString);
+        self::assertStringContainsString('BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1', $connectionString);
+    }
+
+    #[Test]
+    public function it_requires_an_account_name_or_blob_endpoint_with_shared_access_signature(): void
+    {
+        $this->expectExceptionObject(
+            new InvalidArgumentException('Connection with a "SharedAccessSignature" must include either "AccountName" or "BlobEndpoint".')
+        );
+
+        Connection::fromArray([
+            'SharedAccessSignature' => 'sv=2023-01-03&ss=b&srt=sco&sp=r&se=2025-01-01',
+        ]);
+    }
+
+    #[Test]
     public function it_ignores_empty_segments_in_a_connection_string(): void
     {
         $connection = Connection::fromString(
@@ -65,7 +105,7 @@ class ConnectionTest extends TestCase
     public function it_rejects_a_connection_string_segment_without_a_value(): void
     {
         $this->expectExceptionObject(
-            new InvalidArgumentException('Expected one of: "AccountName", "AccountKey", "BlobEndpoint", "DefaultEndpointsProtocol", "EndpointSuffix", "SharedAccessSignature". Got: "invalid_segment"')
+            new InvalidArgumentException('Expected one of: "AccountName", "AccountKey", "BlobEndpoint", "DefaultEndpointsProtocol", "EndpointSuffix", "FileEndpoint", "QueueEndpoint", "SharedAccessSignature", "TableEndpoint". Got: "invalid_segment"')
         );
 
         Connection::fromString('AccountName=account_name;invalid_segment;AccountKey=account_key');

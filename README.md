@@ -89,7 +89,7 @@ Storage::disk('azure-images')->put('logo.png', $contents);
 
 | Property                     | Required | Default            | Description                              |
 |------------------------------|----------|--------------------|------------------------------------------|
-| `account_name`               | Yes      | -                  | Storage account name                     |
+| `account_name`               | Yes**    | -                  | Storage account name                     |
 | `account_key`                | Yes*     | -                  | Storage account access key               |
 | `shared_access_signature`    | Yes*     | -                  | SAS token (alternative to `account_key`) |
 | `default_endpoints_protocol` | No       | `https`            | Protocol to use                          |
@@ -97,6 +97,10 @@ Storage::disk('azure-images')->put('logo.png', $contents);
 | `blob_endpoint`              | No       | -                  | Custom domain endpoint                   |
 
 \* Either `account_key` or `shared_access_signature` is **required**.
+
+\** Optional when a `shared_access_signature` is combined with a `blob_endpoint`.
+
+Connection strings copied from the Azure portal work as-is, including **SAS connection strings** (`BlobEndpoint=…;SharedAccessSignature=…`). For local development with [Azurite](https://github.com/Azure/Azurite), use the `UseDevelopmentStorage=true` shortcut.
 
 For more information on connection strings, see the [**Azure Storage docs**](https://docs.microsoft.com/en-us/azure/storage/common/storage-configure-connection-string).
 
