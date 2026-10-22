@@ -61,7 +61,8 @@
     },
     "config": {
         "allow-plugins": {
-            "phpro/grumphp": true
+            "phpro/grumphp": true,
+            "php-http/discovery": false
         }
     },
     "extra": {
