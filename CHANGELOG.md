@@ -2,6 +2,17 @@
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-10-22
+
+### Added
+
+- Support SAS connection strings from the Azure portal and the Azurite `UseDevelopmentStorage=true` shortcut ([**55eeb8c**](https://github.com/shineability/laravel-azure-blob-storage/commit/55eeb8c))
+
+### Fixed
+
+- Connection strings with a trailing `;` or empty segments no longer crash ([**4e9641f**](https://github.com/shineability/laravel-azure-blob-storage/commit/4e9641f))
+- `temporaryUploadUrl()` now passes `$options` (e.g. `permissions`) through ([**f0ebca6**](https://github.com/shineability/laravel-azure-blob-storage/commit/f0ebca6))
+
 ## [1.3.0] - 2026-07-06
 
 ### Changed
@@ -52,7 +63,8 @@
 
 - Initial release
 
-[Unreleased]: https://github.com/shineability/laravel-azure-blob-storage/compare/1.3.0...HEAD
+[Unreleased]: https://github.com/shineability/laravel-azure-blob-storage/compare/1.4.0...HEAD
+[1.4.0]: https://github.com/shineability/laravel-azure-blob-storage/compare/1.3.0...1.4.0
 [1.3.0]: https://github.com/shineability/laravel-azure-blob-storage/compare/1.2.0...1.3.0
 [1.2.0]: https://github.com/shineability/laravel-azure-blob-storage/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/shineability/laravel-azure-blob-storage/compare/1.0.0...1.1.0
